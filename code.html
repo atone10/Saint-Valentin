@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commit: My Heart // Ms. Nonchalant</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fira Code (Tech) and Space Grotesk (Trendy/Fashion) -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS VARIABLES (The Theme) --- */
+        :root {
+            --bg-dark: #050505;
+            --glass-surface: rgba(20, 20, 25, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --neon-pink: #ff0055;
+            --neon-cyan: #00f2ea;
+            --neon-purple: #bd00ff;
+            --text-main: #e0e0e0;
+            --code-comment: #6272a4;
+            --code-var: #ff79c6;
+            --code-string: #f1fa8c;
+            --code-func: #8be9fd;
+            --font-tech: 'Fira Code', monospace;
+            --font-chic: 'Space Grotesk', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(189, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 85, 0.15) 0%, transparent 40%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: var(--font-chic);
+            overflow: hidden;
+            color: var(--text-main);
+        }
+
+        /* --- BACKGROUND ANIMATION (The Aura) --- */
+        .aura {
+            position: absolute;
+            width: 60vw;
+            height: 60vw;
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-pink));
+            filter: blur(120px);
+            opacity: 0.15;
+            border-radius: 50%;
+            z-index: -1;
+            animation: breathe 8s infinite alternate ease-in-out;
+        }
+
+        @keyframes breathe {
+            0% { transform: scale(0.8) rotate(0deg); opacity: 0.1; }
+            100% { transform: scale(1.1) rotate(10deg); opacity: 0.2; }
+        }
+
+        /* --- INTRO SCREEN (The "Button") --- */
+        .intro-container {
+            text-align: center;
+            z-index: 10;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #fff, #bbb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-family: var(--font-tech);
+            color: var(--neon-cyan);
+            font-size: 0.9rem;
+            margin-bottom: 2.5rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .run-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--neon-pink);
+            color: var(--neon-pink);
+            padding: 18px 45px;
+            font-family: var(--font-tech);
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 50px; /* Pill shape for fashion feel */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.2);
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .run-btn:hover {
+            background: var(--neon-pink);
+            color: #fff;
+            box-shadow: 0 0 40px rgba(255, 0, 85, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .run-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .run-btn:hover::before {
+            left: 100%;
+        }
+
+        /* --- THE IDE WINDOW (Hidden Initially) --- */
+        .ide-window {
+            position: absolute;
+            width: 800px;
+            max-width: 90vw;
+            height: 600px; /* Made slightly taller for the poem */
+            background: var(--glass-surface);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: scale(0.8) translateY(30px);
+            pointer-events: none; /* Disabled when hidden */
+            transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .ide-window.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: all;
+            z-index: 20;
+        }
+
+        /* IDE Header (Mac Style) */
+        .window-header {
+            height: 44px;
+            background: rgba(255,255,255,0.03);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            border-radius: 16px 16px 0 0;
+            justify-content: space-between;
+        }
+
+        .traffic-lights {
+            display: flex;
+            gap: 8px;
+        }
+
+        .light {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .close { background: #ff5f56; }
+        .min { background: #ffbd2e; }
+        .max { background: #27c93f; }
+
+        .filename {
+            font-family: var(--font-tech);
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 1px;
+        }
+
+        .heart-icon {
+            color: var(--neon-pink);
+            font-size: 0.9rem;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* IDE Body */
+        .window-body {
+            flex: 1;
+            display: flex;
+            padding: 25px;
+            overflow-y: auto;
+            font-family: var(--font-tech);
+            font-size: 0.9rem; /* Adjustable for mobile */
+            line-height: 1.6;
+            color: var(--text-main);
+            scrollbar-width: thin;
+            scrollbar-color: var(--neon-pink) transparent;
+        }
+
+        /* Custom Scrollbar */
+        .window-body::-webkit-scrollbar {
+            width: 8px;
+        }
+        .window-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .window-body::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        /* Line Numbers */
+        .line-numbers {
+            color: rgba(255,255,255,0.15);
+            text-align: right;
+            padding-right: 20px;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            user-select: none;
+            min-width: 40px;
+        }
+
+        /* Code Content Area */
+        .code-area {
+            padding-left: 20px;
+            width: 100%;
+        }
+
+        /* Syntax Highlighting Classes */
+        .kwd { color: var(--neon-purple); font-weight: bold; } /* Keyword */
+        .var { color: var(--neon-pink); font-style: italic; } /* Variable */
+        .str { color: var(--code-string); } /* String */
+        .fun { color: var(--code-func); } /* Function */
+        .cmt { color: var(--code-comment); } /* Comment */
+        .obj { color: var(--neon-cyan); } /* Object Property */
+        
+        /* Cursor Animation */
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 15px;
+            background-color: var(--neon-cyan);
+            animation: blink 1s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* Footer Status Bar */
+        .window-footer {
+            height: 30px;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            font-family: var(--font-tech);
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.4);
+            justify-content: space-between;
+            border-radius: 0 0 16px 16px;
+        }
+        
+        .footer-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .git-branch {
+            color: var(--neon-cyan);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 600px) {
+            .ide-window {
+                height: 80vh; /* Taller on mobile */
+                width: 95vw;
+            }
+            .window-body {
+                font-size: 0.8rem; /* Smaller font for code */
+                padding: 15px;
+            }
+            .line-numbers {
+                padding-right: 10px;
+                min-width: 30px;
+            }
+            .code-area {
+                padding-left: 10px;
+            }
+            .hero-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Aura -->
+    <div class="aura"></div>
+
+    <!-- Intro Screen -->
+    <div class="intro-container" id="intro-screen">
+        <h1 class="hero-title">Hello, World.</h1>
+        <p class="hero-subtitle">System Status: Waiting for user input</p>
+        <button class="run-btn" onclick="runValentine()">
+            <i class="fas fa-terminal"></i> Initialize v2.0
+        </button>
+    </div>
+
+    <!-- The IDE Window -->
+    <div class="ide-window" id="ide-window">
+        <div class="window-header">
+            <div class="traffic-lights">
+                <div class="light close"></div>
+                <div class="light min"></div>
+                <div class="light max"></div>
+            </div>
+            <div class="filename">valentine_main.js</div>
+            <div class="heart-icon"><i class="fas fa-heart"></i></div>
+        </div>
+
+        <div class="window-body">
+            <div class="line-numbers">
+                1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19<br>20<br>21<br>22<br>23<br>24<br>25<br>26<br>27<br>28<br>29<br>30
+            </div>
+            <div class="code-area" id="code-content">
+                <!-- Content will be typed here by JS -->
+            </div>
+        </div>
+
+        <div class="window-footer">
+            <div class="footer-item">
+                <span class="git-branch"><i class="fas fa-code-branch"></i> main*</span>
+                <span><i class="fas fa-times-circle"></i> 0 Errors</span>
+            </div>
+            <div class="footer-item">
+                <span>Ln 1, Col 1</span>
+                <span>JavaScript</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // The Data (Your Letter)
+        const valentineData = {
+            recipient: "Ms. Beautiful Nonchalant "
+        };
+
+        // The Code to "Type" (Formatted as valid-ish JS)
+        // We use HTML tags inside strings for colors because we append using innerHTML
+        const codeLines = [
+            `<span class="cmt">// Subject: To ${valentineData.recipient} 😶</span>`,
+            `<span class="kwd">const</span> <span class="var">traits</span> = {`,
+            `  <span class="obj">vibe</span>: <span class="str">"Nonchalant Queen 💅"</span>,`,
+            `  <span class="obj">status</span>: <span class="str">"Pagod na sa Thesis "</span>,`,
+            `};`,
+            ``,
+            `<span class="cmt">/*</span>`,
+            `<span class="cmt"> * A MESSAGE FOR YOU:</span>`,
+            `<span class="cmt"> * </span>`,
+            `<span class="cmt"> * To the Nonchalant Queen with the highest standards,</span>`,
+            `<span class="cmt"> * Who’s Pagod na sa Thesis but still moving forward.</span>`,
+            `<span class="cmt"> * You say you're an Indecisive Person full of doubt,</span>`,
+            `<span class="cmt"> * But you're a Random but Special surprise, no doubt </span>`,
+            `<span class="cmt"> * </span>`,
+            `<span class="cmt"> * Thankful I met the girl with walls so high,</span>`,
+            `<span class="cmt"> * Who admits she’s shy but gives it a try.</span>`,
+            `<span class="cmt"> * Whether you're a Hidden Enemy when hungry or stressed 😠,</span>`,
+            `<span class="cmt"> * Or a Partner in Crime when feeling your best ...</span>`,
+            `<span class="cmt"> * </span>`,
+            `<span class="cmt"> * I'm just G to know you, every version, every part,</span>`,
+            `<span class="cmt"> * (Especially that Softie hiding inside your heart).</span>`,
+            `<span class="cmt"> * </span>`,
+            `<span class="cmt"> * No pressure though, take your time to reveal,</span>`,
+            `<span class="cmt"> * I'm just happy to know that this vibe is real.</span>`,
+            `<span class="cmt"> */</span>`,
+            ``,
+            `<span class="kwd">console</span>.<span class="fun">log</span>(<span class="str">"Happy Valentine's Day!"</span>);`
+        ];
+
+        let lineIndex = 0;
+        let charIndex = 0;
+        let currentLineHTML = "";
+        let isTag = false;
+
+        function runValentine() {
+            // 1. Hide Intro
+            const intro = document.getElementById('intro-screen');
+            intro.style.opacity = '0';
+            intro.style.transform = 'translateY(-20px)';
+            
+            setTimeout(() => {
+                intro.style.display = 'none';
+                
+                // 2. Show IDE
+                const ide = document.getElementById('ide-window');
+                ide.classList.add('active');
+
+                // 3. Start Typing Effect after a small delay
+                setTimeout(typeCode, 800);
+            }, 600);
+        }
+
+        function typeCode() {
+            const codeContainer = document.getElementById('code-content');
+            
+            if (lineIndex < codeLines.length) {
+                // Get the full HTML string of the current line
+                const fullLine = codeLines[lineIndex];
+                
+                // Check if we just started a line
+                if (charIndex === 0) {
+                    // Create a new div for this line
+                    const lineDiv = document.createElement('div');
+                    lineDiv.classList.add('code-line');
+                    codeContainer.appendChild(lineDiv);
+                }
+
+                // Get the current line element (last child)
+                const currentLineEl = codeContainer.lastElementChild;
+
+                // Logic to handle HTML tags instantly so we don't type "<...s...p...a...n...>"
+                // We basically strip tags for the typing logic but keep them for rendering
+                
+                // HYBRID APPROACH: Type character by character, but if we hit a tag, append the whole tag.
+                
+                const char = fullLine.charAt(charIndex);
+                
+                if (char === '<') isTag = true;
+                
+                if (isTag) {
+                    // If inside a tag, keep adding to buffer until '>'
+                    currentLineHTML += char;
+                    if (char === '>') isTag = false;
+                } else {
+                    currentLineHTML += char;
+                }
+                
+                // Update the visual content + Add Cursor
+                currentLineEl.innerHTML = currentLineHTML + '<span class="cursor"></span>';
+                
+                // Remove cursor from previous lines
+                const prevLines = codeContainer.querySelectorAll('.code-line');
+                if(prevLines.length > 1) {
+                    prevLines[prevLines.length - 2].querySelector('.cursor')?.remove();
+                }
+
+                charIndex++;
+
+                // Speed control
+                let typingSpeed = 20; // Fast typing
+                if (isTag) typingSpeed = 0; // Instant for tags
+
+                if (charIndex < fullLine.length) {
+                    setTimeout(typeCode, typingSpeed);
+                } else {
+                    // Line finished
+                    lineIndex++;
+                    charIndex = 0;
+                    currentLineHTML = "";
+                    setTimeout(typeCode, 150); // Pause before next line
+                }
+            } else {
+                // Finished typing everything
+                // Keep the last cursor blinking
+            }
+        }
+    </script>
+</body>
+</html>
